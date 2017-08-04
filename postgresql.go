@@ -189,6 +189,10 @@ func (p *postgresql) TruncateAll(tx *Connection) error {
 	return tx.RawQuery(pgTruncate).Exec()
 }
 
+func (p *postgresql) QuoteColumn(s string) string {
+	return fmt.Sprintf("\"%s\"", s)
+}
+
 func newPostgreSQL(deets *ConnectionDetails) dialect {
 	cd := &postgresql{
 		ConnectionDetails: deets,

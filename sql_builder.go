@@ -184,14 +184,20 @@ func (sq *sqlBuilder) buildColumns() Columns {
 		cols, ok := columnCache[tableName]
 		//if alias is different, remake columns
 		if ok && cols.TableAlias == sq.Model.As {
-			return cols
+			c := &cols
+			c.Quoter = sq.Query.Connection.Dialect.QuoteColumn
+			return *c
 		}
 		cols = ColumnsForStructWithAlias(sq.Model.Value, tableName, sq.Model.As)
-		columnCache[tableName] = cols
-		return cols
+		c := &cols
+		c.Quoter = sq.Query.Connection.Dialect.QuoteColumn
+		columnCache[tableName] = *c
+		return *c
 	} else {
 		cols := NewColumns("")
-		cols.Add(sq.AddColumns...)
-		return cols
+		c := &cols
+		c.Quoter = sq.Query.Connection.Dialect.QuoteColumn
+		c.Add(sq.AddColumns...)
+		return *c
 	}
 }

@@ -32,6 +32,7 @@ type dialect interface {
 	FizzTranslator() fizz.Translator
 	Lock(func() error) error
 	TruncateAll(*Connection) error
+	QuoteColumn(string) string
 }
 
 func genericCreate(s store, model *Model, cols Columns) error {

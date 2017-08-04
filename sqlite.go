@@ -176,6 +176,10 @@ func (m *sqlite) TruncateAll(tx *Connection) error {
 	return tx.RawQuery(strings.Join(stmts, "; ")).Exec()
 }
 
+func (p *sqlite) QuoteColumn(s string) string {
+	return fmt.Sprintf("\"%s\"", s)
+}
+
 func newSQLite(deets *ConnectionDetails) (dialect, error) {
 	deets.URL = fmt.Sprintf("sqlite3://%s", deets.Database)
 	cd := &sqlite{

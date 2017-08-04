@@ -156,6 +156,11 @@ func (m *mysql) TruncateAll(tx *Connection) error {
 	return tx.RawQuery(strings.Join(qs, " ")).Exec()
 }
 
+func (p *mysql) QuoteColumn(s string) string {
+	panic(fmt.Sprintf("MYSQL: %s\n", s))
+	return fmt.Sprintf("`%s`", s)
+}
+
 func newMySQL(deets *ConnectionDetails) dialect {
 	cd := &mysql{
 		ConnectionDetails: deets,
