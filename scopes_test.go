@@ -9,7 +9,7 @@ import (
 
 func Test_Scopes(t *testing.T) {
 	r := require.New(t)
-	oql := "SELECT enemies.A FROM enemies AS enemies"
+	oql := `SELECT enemies."A" FROM enemies AS enemies`
 
 	m := &pop.Model{Value: &Enemy{}}
 

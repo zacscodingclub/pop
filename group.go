@@ -1,6 +1,7 @@
 package pop
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -11,7 +12,7 @@ type GroupClause struct {
 type groupClauses []GroupClause
 
 func (c GroupClause) String() string {
-	return c.Field
+	return fmt.Sprintf("%q", c.Field)
 }
 
 func (c groupClauses) String() string {

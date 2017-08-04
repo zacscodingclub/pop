@@ -21,7 +21,7 @@ func Test_Columns_Readable_SelectString(t *testing.T) {
 	for _, f := range []interface{}{foo{}, &foo{}} {
 		c := columns.ColumnsForStruct(f, "foo")
 		u := c.Readable().SelectString()
-		r.Equal(u, "first_name as f, foo.LastName, foo.read")
+		r.Equal(`first_name as f, foo."LastName", foo."read"`, u)
 	}
 }
 

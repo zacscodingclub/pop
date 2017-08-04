@@ -12,6 +12,7 @@ type Columns struct {
 	lock       *sync.RWMutex
 	TableName  string
 	TableAlias string
+	Quote      string
 }
 
 // Add a column to the list.
@@ -57,7 +58,7 @@ func (c *Columns) Add(names ...string) []*Column {
 			if ss == "" {
 				ss = xs[0]
 				if tableAlias != "" {
-					ss = fmt.Sprintf("%s.%s", tableAlias, ss)
+					ss = fmt.Sprintf("%s.%s%s%s", tableAlias, c.Quote, ss, c.Quote)
 				}
 			}
 

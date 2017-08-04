@@ -14,19 +14,19 @@ func Test_Where(t *testing.T) {
 
 	q := PDB.Where("id = ?", 1)
 	sql, _ := q.ToSQL(m)
-	a.Equal(ts("SELECT enemies.A FROM enemies AS enemies WHERE id = ?"), sql)
+	a.Equal(ts(`SELECT enemies."A" FROM enemies AS enemies WHERE id = ?`), sql)
 
 	q.Where("first_name = ? and last_name = ?", "Mark", "Bates")
 	sql, _ = q.ToSQL(m)
-	a.Equal(ts("SELECT enemies.A FROM enemies AS enemies WHERE id = ? AND first_name = ? and last_name = ?"), sql)
+	a.Equal(ts(`SELECT enemies."A" FROM enemies AS enemies WHERE id = ? AND first_name = ? and last_name = ?`), sql)
 
 	q = PDB.Where("name = ?", "Mark 'Awesome' Bates")
 	sql, _ = q.ToSQL(m)
-	a.Equal(ts("SELECT enemies.A FROM enemies AS enemies WHERE name = ?"), sql)
+	a.Equal(ts(`SELECT enemies."A" FROM enemies AS enemies WHERE name = ?`), sql)
 
 	q = PDB.Where("name = ?", "'; truncate users; --")
 	sql, _ = q.ToSQL(m)
-	a.Equal(ts("SELECT enemies.A FROM enemies AS enemies WHERE name = ?"), sql)
+	a.Equal(ts(`SELECT enemies."A" FROM enemies AS enemies WHERE name = ?`), sql)
 }
 
 func Test_Where_In(t *testing.T) {
@@ -54,11 +54,11 @@ func Test_Order(t *testing.T) {
 	m := &pop.Model{Value: &Enemy{}}
 	q := PDB.Order("id desc")
 	sql, _ := q.ToSQL(m)
-	a.Equal(ts("SELECT enemies.A FROM enemies AS enemies ORDER BY id desc"), sql)
+	a.Equal(ts(`SELECT enemies."A" FROM enemies AS enemies ORDER BY id desc`), sql)
 
 	q.Order("name desc")
 	sql, _ = q.ToSQL(m)
-	a.Equal(ts("SELECT enemies.A FROM enemies AS enemies ORDER BY id desc, name desc"), sql)
+	a.Equal(ts(`SELECT enemies."A" FROM enemies AS enemies ORDER BY id desc, name desc`), sql)
 }
 
 func Test_GroupBy(t *testing.T) {
@@ -68,29 +68,29 @@ func Test_GroupBy(t *testing.T) {
 	q := PDB.Q()
 	q.GroupBy("A")
 	sql, _ := q.ToSQL(m)
-	a.Equal(ts("SELECT enemies.A FROM enemies AS enemies GROUP BY A"), sql)
+	a.Equal(ts(`SELECT enemies."A" FROM enemies AS enemies GROUP BY "A"`), sql)
 
 	q = PDB.Q()
 	q.GroupBy("A", "B")
 	sql, _ = q.ToSQL(m)
-	a.Equal(ts("SELECT enemies.A FROM enemies AS enemies GROUP BY A, B"), sql)
+	a.Equal(ts(`SELECT enemies."A" FROM enemies AS enemies GROUP BY "A", "B"`), sql)
 
 	q = PDB.Q()
 	q.GroupBy("A", "B").Having("enemies.A=?", "test")
 	sql, _ = q.ToSQL(m)
 	if PDB.Dialect.Details().Dialect == "postgres" {
-		a.Equal(ts("SELECT enemies.A FROM enemies AS enemies GROUP BY A, B HAVING enemies.A=$1"), sql)
+		a.Equal(ts(`SELECT enemies."A" FROM enemies AS enemies GROUP BY "A", "B" HAVING enemies.A=$1`), sql)
 	} else {
-		a.Equal(ts("SELECT enemies.A FROM enemies AS enemies GROUP BY A, B HAVING enemies.A=?"), sql)
+		a.Equal(ts(`SELECT enemies."A" FROM enemies AS enemies GROUP BY "A", "B" HAVING enemies.A=?`), sql)
 	}
 
 	q = PDB.Q()
 	q.GroupBy("A", "B").Having("enemies.A=?", "test").Having("enemies.B=enemies.A")
 	sql, _ = q.ToSQL(m)
 	if PDB.Dialect.Details().Dialect == "postgres" {
-		a.Equal(ts("SELECT enemies.A FROM enemies AS enemies GROUP BY A, B HAVING enemies.A=$1 AND enemies.B=enemies.A"), sql)
+		a.Equal(ts(`SELECT enemies."A" FROM enemies AS enemies GROUP BY "A", "B" HAVING enemies.A=$1 AND enemies.B=enemies.A`), sql)
 	} else {
-		a.Equal(ts("SELECT enemies.A FROM enemies AS enemies GROUP BY A, B HAVING enemies.A=? AND enemies.B=enemies.A"), sql)
+		a.Equal(ts(`SELECT enemies."A" FROM enemies AS enemies GROUP BY "A", "B" HAVING enemies.A=? AND enemies.B=enemies.A`), sql)
 	}
 }
 
@@ -99,7 +99,7 @@ func Test_ToSQL(t *testing.T) {
 	transaction(func(tx *pop.Connection) {
 		user := &pop.Model{Value: &User{}}
 
-		s := "SELECT name as full_name, users.alive, users.bio, users.birth_date, users.created_at, users.email, users.id, users.name, users.price, users.updated_at FROM users AS users"
+		s := `SELECT name as full_name, users."alive", users."bio", users."birth_date", users."created_at", users."email", users."id", users."name", users."price", users."updated_at" FROM users AS users`
 
 		query := pop.Q(tx)
 		q, _ := query.ToSQL(user)
@@ -110,7 +110,7 @@ func Test_ToSQL(t *testing.T) {
 		a.Equal(fmt.Sprintf("%s ORDER BY id desc", s), q)
 
 		q, _ = query.ToSQL(&pop.Model{Value: &User{}, As: "u"})
-		a.Equal("SELECT name as full_name, u.alive, u.bio, u.birth_date, u.created_at, u.email, u.id, u.name, u.price, u.updated_at FROM users AS u ORDER BY id desc", q)
+		a.Equal(`SELECT name as full_name, u."alive", u."bio", u."birth_date", u."created_at", u."email", u."id", u."name", u."price", u."updated_at" FROM users AS u ORDER BY id desc`, q)
 
 		query = tx.Where("id = 1")
 		q, _ = query.ToSQL(user)

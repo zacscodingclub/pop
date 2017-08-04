@@ -15,14 +15,14 @@ func Test_BelongsTo(t *testing.T) {
 	m := &pop.Model{Value: &Enemy{}}
 
 	sql, _ := q.ToSQL(m)
-	r.Equal(ts("SELECT enemies.A FROM enemies AS enemies WHERE user_id = ?"), sql)
+	r.Equal(ts(`SELECT enemies."A" FROM enemies AS enemies WHERE user_id = ?`), sql)
 }
 
 func Test_BelongsToThrough(t *testing.T) {
 	r := require.New(t)
 
 	q := PDB.BelongsToThrough(&User{ID: 1}, &Friend{})
-	qs := "SELECT enemies.A FROM enemies AS enemies, good_friends AS good_friends WHERE good_friends.user_id = ? AND enemies.id = good_friends.enemy_id"
+	qs := `SELECT enemies."A" FROM enemies AS enemies, good_friends AS good_friends WHERE good_friends.user_id = ? AND enemies.id = good_friends.enemy_id`
 
 	m := &pop.Model{Value: &Enemy{}}
 	sql, _ := q.ToSQL(m)
