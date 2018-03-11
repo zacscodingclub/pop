@@ -1,7 +1,6 @@
 package pop
 
 import (
-	"fmt"
 	"net/url"
 	"regexp"
 	"strconv"
@@ -115,12 +114,6 @@ func (cd *ConnectionDetails) Finalize() error {
 		return errors.Errorf("Unknown dialect %s!", cd.Dialect)
 	}
 	return nil
-}
-
-// Parse is deprecated! Please use `ConnectionDetails.Finalize()` instead!
-func (cd *ConnectionDetails) Parse(port string) error {
-	fmt.Println("[POP] ConnectionDetails#Parse(port string) has been deprecated!")
-	return cd.Finalize()
 }
 
 // RetrySleep returns the amount of time to wait between two connection retries
